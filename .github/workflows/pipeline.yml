@@ -1,0 +1,21 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - release/*
+
+jobs:
+  ci-cd:
+    uses: naresh4b9/cicd-templates/.github/workflows/ci-cd-template.yml@main
+    with:
+      branch-name: ${{ github.ref_name }}
+      environment: ${{ 
+        github.ref == 'refs/heads/main' && 'prod' || 
+        startsWith(github.ref, 'refs/heads/release/') && 'stage' || 
+        'dev'
+      }}
+      docker-image-tag: aiapp:${{ github.ref_name }}-${{ github.sha }}
+
