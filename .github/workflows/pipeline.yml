@@ -24,6 +24,7 @@ jobs:
             echo "env=stage" >> $GITHUB_OUTPUT
           else
             echo "env=dev" >> $GITHUB_OUTPUT
+          fi
 
   ci-cd:
     needs: prepare
