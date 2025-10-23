@@ -8,9 +8,25 @@ on:
       - release/*
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      env-name: ${{ steps.set-env.outputs.env }}
+    steps:
+      - id: set-env
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          if [ "$BRANCH_NAME" == "main" ]; then
+            echo "env=prod" >> $GITHUB_OUTPUT
+          elif [[ "$BRANCH_NAME" == release/* ]]; then
+            echo "env=stage" >> $GITHUB_OUTPUT
+          else
+            echo "env=dev" >> $GITHUB_OUTPUT
+
   ci-cd:
+    needs: prepare
     uses: naresh4b9/cicd-templates/.github/workflows/ci-cd-template.yml@main
     with:
       branch-name: ${{ github.ref_name }}
-      environment: ${{ github.ref == 'refs/heads/main' && 'prod' || github.ref_name.startsWith('release/') && 'stage' || 'dev' }}
+      environment: ${{ needs.prepare.outputs.env-name }}
       docker-image-tag: aiapp-${{ github.ref_name }}-${{ github.sha }}
