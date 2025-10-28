@@ -22,5 +22,4 @@ jobs:
       branch-name: ${{ github.ref_name }}
       environment: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
       docker-image-tag: aiapp-${{ github.ref_name }}-${{ github.sha }}
-    secrets:
-      DOCKER_PAT: ${{ secrets.DOCKER_PAT }}
+    secrets: inherit
