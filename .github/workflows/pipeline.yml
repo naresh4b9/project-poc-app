@@ -7,30 +7,20 @@ on:
       - main
       - develop
       - release/*
-      
   workflow_dispatch:
 
-jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    outputs:
-      env-name: ${{ steps.set-env.outputs.env }}
-    steps:
-      - id: set-env
-        run: |
-          BRANCH_NAME=${GITHUB_REF#refs/heads/}
-          if [ "$BRANCH_NAME" == "main" ]; then
-            echo "env=prod" >> $GITHUB_OUTPUT
-          elif [[ "$BRANCH_NAME" == release/* ]]; then
-            echo "env=stage" >> $GITHUB_OUTPUT
-          else
-            echo "env=dev" >> $GITHUB_OUTPUT
-          fi
+# <-- THIS IS CRITICAL: grant the permissions CodeQL and reusable workflow need
+permissions:
+  contents: read
+  actions: read
+  security-events: write
 
-  ci-cd:
-    needs: prepare
+jobs:
+  call-template:
     uses: naresh4b9/cicd-templates/.github/workflows/ci-cd-template.yml@main
     with:
       branch-name: ${{ github.ref_name }}
-      environment: ${{ needs.prepare.outputs.env-name }}
+      environment: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
       docker-image-tag: aiapp-${{ github.ref_name }}-${{ github.sha }}
+    secrets:
+      DOCKER_PAT: ${{ secrets.DOCKER_PAT }}
