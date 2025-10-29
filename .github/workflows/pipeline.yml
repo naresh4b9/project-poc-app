@@ -9,7 +9,6 @@ on:
       - release/*
   workflow_dispatch:
 
-# <-- THIS IS CRITICAL: grant the permissions CodeQL and reusable workflow need
 permissions:
   contents: read
   actions: read
@@ -22,5 +21,4 @@ jobs:
       branch-name: ${{ github.ref_name }}
       environment: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
       docker-image-tag: aiapp-${{ github.ref_name }}-${{ github.sha }}
-    secrets:
-      DOCKER_PAT: ${{ secrets.DOCKER_PAT }}
+    secrets: inherit
