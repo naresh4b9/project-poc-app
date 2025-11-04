@@ -1,4 +1,4 @@
-#test#
+#test
 name: CI/CD Pipeline
 
 on:
@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   call-template:
-    uses: naresh4b9/cicd-templates/.github/workflows/ci-cd-template.yml@main
+    uses: naresh4b9/cicd-templates/.github/workflows/docker-template.yml@main
     with:
       branch-name: ${{ github.ref_name }}
       environment: ${{ github.ref_name == 'main' && 'prod' || github.ref_name == 'stage' && 'stage' || github.ref_name == 'uat' && 'uat' || 'dev' }}
