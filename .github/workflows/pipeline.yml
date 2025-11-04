@@ -4,9 +4,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - master
+      - stage
+      - uat
       - develop
-      - release/*
   workflow_dispatch:
 
 permissions:
@@ -19,6 +20,6 @@ jobs:
     uses: naresh4b9/cicd-templates/.github/workflows/ci-cd-template.yml@main
     with:
       branch-name: ${{ github.ref_name }}
-      environment: ${{ github.ref_name == 'main' && 'prod' || 'dev' }}
+      environment: ${{ github.ref_name == 'master' && 'prod' || github.ref_name == 'stage' && 'stage' || github.ref_name == 'uat' && 'uat' || 'dev' }}
       docker-image-tag: aiapp-${{ github.ref_name }}-${{ github.sha }}
     secrets: inherit
